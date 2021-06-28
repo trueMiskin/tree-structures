@@ -1,10 +1,46 @@
 #!/usr/bin/env python3
 
+from ab_tree import ABTree
 from avl import AvlTree, AvlNode
 import unittest
 
 
-class TestAVLTree(unittest.TestCase):
+class TreeGeneric(unittest.TestCase):
+    def run_test(self, test_num, tree):
+        with open(f"dataset/test{test_num}.in", "r") as fin, open(f"dataset/test{test_num}.out", "r") as fout:
+            def checkSequence(node, fce):
+                arr = []
+
+                while node is not None:
+                    arr.append(node)
+                    node = fce(node)
+
+                self.assertEqual(' '.join(str(x.key) for x in arr), fout.readline().strip())
+
+            num_operations = int(fin.readline())
+
+            for _ in range(num_operations):
+                #print(_, "------")
+                #print(tree)
+                _input = fin.readline().split()
+                if len(_input) == 1:
+                    # don't fail on non-existent second variable
+                    _input.append(0)
+                operatation, key = map(int, _input)
+                if operatation == 0:
+                    tree.insert(key, key)
+                elif operatation == 1:
+                    node = tree.find(key)
+                    self.assertEqual(node is not None, fout.readline().strip() == "1")
+                elif operatation == 2:
+                    tree.delete(key)
+                elif operatation == 3:
+                    checkSequence(tree.findmin(), lambda x: x.nxt)
+                else:
+                    checkSequence(tree.findmax(), lambda x: x.prev)
+
+
+class TestAVLTree(TreeGeneric):
     def right_order_nxt(self, root, correct):
         for x in correct:
             self.assertEqual(root.key, x)
@@ -220,43 +256,19 @@ class TestAVLTree(unittest.TestCase):
         self.assertEqual(tree.findmin().key, 1)
         self.assertEqual(tree.findmax().key, 19)
 
-    def run_test(self, test_num):
-        with open(f"dataset/test{test_num}.in", "r") as fin, open(f"dataset/test{test_num}.out", "r") as fout:
-            def checkSequence(node, fce):
-                arr = []
+    def test_fulltest1(self): self.run_test(1, AvlTree())
+    def test_fulltest2(self): self.run_test(2, AvlTree())
+    def test_fulltest3(self): self.run_test(3, AvlTree())
+    def test_fulltest4(self): self.run_test(4, AvlTree())
+    def test_fulltest5(self): self.run_test(5, AvlTree())
 
-                while node is not None:
-                    arr.append(node)
-                    node = fce(node)
 
-                self.assertEqual(' '.join(str(x.key) for x in arr), fout.readline().strip())
-
-            num_operations = int(fin.readline())
-            tree = AvlTree()
-
-            for _ in range(num_operations):
-                _input = fin.readline().split()
-                if len(_input) == 1:
-                    # don't fail on non-existent second variable
-                    _input.append(0)
-                operatation, key = map(int, _input)
-                if operatation == 0:
-                    tree.insert(key, key)
-                elif operatation == 1:
-                    node = tree.find(key)
-                    self.assertEqual(node is not None, fout.readline().strip() == "1")
-                elif operatation == 2:
-                    tree.delete(key)
-                elif operatation == 3:
-                    checkSequence(tree.findmin(), lambda x: x.nxt)
-                else:
-                    checkSequence(tree.findmax(), lambda x: x.prev)
-
-    def test_fulltest1(self): self.run_test(1)
-    def test_fulltest2(self): self.run_test(2)
-    def test_fulltest3(self): self.run_test(3)
-    def test_fulltest4(self): self.run_test(4)
-    def test_fulltest5(self): self.run_test(5)
+class TestABTree(TreeGeneric):
+    def test_fulltest1(self): self.run_test(1, ABTree(2, 4))
+    def test_fulltest2(self): self.run_test(2, ABTree(2, 4))
+    def test_fulltest3(self): self.run_test(3, ABTree(2, 4))
+    def test_fulltest4(self): self.run_test(4, ABTree(2, 4))
+    def test_fulltest5(self): self.run_test(5, ABTree(2, 4))
 
 
 if __name__ == "__main__":
