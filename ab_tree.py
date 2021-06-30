@@ -1,5 +1,5 @@
 from typing import Optional, List, Tuple
-from generic import Node
+from generic import ATree, Node
 
 
 class ABVertex:
@@ -13,7 +13,7 @@ class ABVertex:
         return f"ABVertex({', '.join(str(n.key) for n in self.keys)})"
 
 
-class ABTree:
+class ABTree(ATree[Node]):
     def __init__(self, a: int, b: int):
         self.root = ABVertex(list(), list(), True)
         self.a = a
