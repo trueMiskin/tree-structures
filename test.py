@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from rb_tree import RBNode, RBTree
 from ab_tree import ABTree
 from avl import AvlTree, AvlNode
 import unittest
@@ -21,7 +22,6 @@ class TreeGeneric(unittest.TestCase):
 
             for _ in range(num_operations):
                 #print(_, "------")
-                #print(tree)
                 _input = fin.readline().split()
                 if len(_input) == 1:
                     # don't fail on non-existent second variable
@@ -38,6 +38,9 @@ class TreeGeneric(unittest.TestCase):
                     checkSequence(tree.findmin(), lambda x: x.nxt)
                 else:
                     checkSequence(tree.findmax(), lambda x: x.prev)
+                #print(tree)
+                # slow but helpfull
+                # self.assertTrue(tree.validate())
 
 
 class TestAVLTree(TreeGeneric):
@@ -269,6 +272,14 @@ class TestABTree(TreeGeneric):
     def test_fulltest3(self): self.run_test(3, ABTree(2, 4))
     def test_fulltest4(self): self.run_test(4, ABTree(2, 4))
     def test_fulltest5(self): self.run_test(5, ABTree(2, 4))
+
+
+class TestRBTree(TreeGeneric):
+    def test_fulltest1(self): self.run_test(1, RBTree())
+    def test_fulltest2(self): self.run_test(2, RBTree())
+    def test_fulltest3(self): self.run_test(3, RBTree())
+    def test_fulltest4(self): self.run_test(4, RBTree())
+    def test_fulltest5(self): self.run_test(5, RBTree())
 
 
 if __name__ == "__main__":
