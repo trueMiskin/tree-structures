@@ -144,13 +144,13 @@ class ABTree(ATree[Node]):
                     vertex.keys[idx] = replace_node
                     key_deleted = True
                 break
-            if node.key > key:
+            if node.key > key and not vertex.leaf:
                 underfull_vertex = self._delete(key, vertex.children[idx])
                 key_deleted = True
                 break
 
-        # muzu se zde zavolat po druhe do stromu -> pokud posledni klíč se mi změnil v průběhu mazání
-        if vertex.keys[-1].key < key and not key_deleted:
+        if len(vertex.keys) != 0 and vertex.keys[-1].key < key and \
+                not key_deleted and not vertex.leaf:
             idx = len(vertex.children) - 1
             underfull_vertex = self._delete(key, vertex.children[idx])
 
