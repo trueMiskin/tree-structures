@@ -70,6 +70,12 @@ class ATree(ABC, Generic[T]):
         """ Return node with the biggest key or None (tree empty) """
         pass
 
+    def validate(self) -> bool:
+        """ Return true if whole tree is valid (matched all requirements)
+            Helpfull for debuging and unittests
+        """
+        return True
+
     def _add_node_to_chain(self, node: T,
                            prev_node: Optional[T], nxt_node: Optional[T]):
         node.prev, node.nxt = prev_node, nxt_node
@@ -107,6 +113,7 @@ class ABinarySearchTree(ATree[BN]):
         return _find(key, self.root)
 
     def _find_bigger(self, node: BN, key) -> Optional[BN]:
+        """ Find the node with lowest bigger key """
         if node.external:
             return None
 
@@ -119,6 +126,7 @@ class ABinarySearchTree(ATree[BN]):
             return self._find_bigger(node.right, key)
 
     def _find_lower(self, node: BN, key) -> Optional[BN]:
+        """ Find the node with the largest smaller key """
         if node.external:
             return None
 

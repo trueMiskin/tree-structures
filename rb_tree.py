@@ -108,7 +108,7 @@ class RBTree(ABinarySearchTree):
         else:
             if node.key == key and node.right.external:
                 # if right node is external, so
-                # - if left node is external, so return external node
+                # - if left node is external and this node must be red -> return external node
                 # - if left is red node, then this node must be black
                 # - if left is black -> cannot occur
                 self._remove_node_from_chain(node)
@@ -160,7 +160,7 @@ class RBTree(ABinarySearchTree):
             return "-"
         return f"( {node}, {' '.join( [self.makerepr(x) for x in [node.left, node.right] ] ) } )"
 
-    def validate(self):
+    def validate(self) -> bool:
         def _validate(node: RBNode, root=False):
             if node.external:
                 return (1, True)

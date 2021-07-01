@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from generic import ATree
 from rb_tree import RBNode, RBTree
 from ab_tree import ABTree
 from avl import AvlTree, AvlNode
@@ -7,7 +8,7 @@ import unittest
 
 
 class TreeGeneric(unittest.TestCase):
-    def run_test(self, test_num, tree):
+    def run_test(self, test_num, tree: ATree):
         with open(f"dataset/test{test_num}.in", "r") as fin, open(f"dataset/test{test_num}.out", "r") as fout:
             def checkSequence(node, fce):
                 arr = []
@@ -25,7 +26,7 @@ class TreeGeneric(unittest.TestCase):
                 _input = fin.readline().split()
                 if len(_input) == 1:
                     # don't fail on non-existent second variable
-                    _input.append(0)
+                    _input.append("0")
                 operatation, key = map(int, _input)
                 if operatation == 0:
                     tree.insert(key, key)

@@ -25,6 +25,11 @@ class ABTree(ATree[Node]):
             self.root = ABVertex([new_root], [left_vertex, right_vertex], False)
 
     def _insert(self, key, value, node: ABVertex) -> Tuple[Optional[Node], Optional[ABVertex], Optional[ABVertex]]:
+        """ Insert node to Vertex with given key
+            Return key that should be added to parent vertex and left, right vertices to this key
+            if vertex is overfull
+            Else return None, None, None
+        """
         if node.leaf:
             idx = 0
             for idx, n in enumerate(node.keys):
@@ -63,6 +68,7 @@ class ABTree(ATree[Node]):
         return (None, None, None)
 
     def _find_bigger(self, node: ABVertex, key) -> Optional[Node]:
+        """ Find the node with lowest bigger key """
         if node.leaf:
             for n in node.keys:
                 if key < n.key:
@@ -78,6 +84,7 @@ class ABTree(ATree[Node]):
             return self._find_bigger(node.children[len(node.children) - 1], key)
 
     def _find_lower(self, node: ABVertex, key) -> Optional[Node]:
+        """ Find the node with the largest smaller key """
         if node.leaf:
             ret = None
             for n in node.keys:
