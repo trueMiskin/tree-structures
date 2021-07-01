@@ -70,6 +70,22 @@ class ATree(ABC, Generic[T]):
         """ Return node with the biggest key or None (tree empty) """
         pass
 
+    def _add_node_to_chain(self, node: T,
+                           prev_node: Optional[T], nxt_node: Optional[T]):
+        node.prev, node.nxt = prev_node, nxt_node
+        if prev_node is not None:
+            prev_node.nxt = node
+        if nxt_node is not None:
+            nxt_node.prev = node
+
+    def _remove_node_from_chain(self, node: T):
+        prev_node = node.prev
+        nxt_node = node.nxt
+        if prev_node is not None:
+            prev_node.nxt = nxt_node
+        if nxt_node is not None:
+            nxt_node.prev = prev_node
+
 
 BN = TypeVar('BN', bound=BinaryNode)
 

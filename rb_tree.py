@@ -129,22 +129,6 @@ class RBTree(ABinarySearchTree):
 
         return self._fix_llrb_invariants(node)
 
-    def _add_node_to_chain(self, node: RBNode,
-                           prev_node: Optional[RBNode], nxt_node: Optional[RBNode]):
-        node.prev, node.nxt = prev_node, nxt_node
-        if prev_node is not None:
-            prev_node.nxt = node
-        if nxt_node is not None:
-            nxt_node.prev = node
-
-    def _remove_node_from_chain(self, node: RBNode):
-        prev_node = node.prev
-        nxt_node = node.nxt
-        if prev_node is not None:
-            prev_node.nxt = nxt_node
-        if nxt_node is not None:
-            nxt_node.prev = prev_node
-
     def _move_red_right(self, node: RBNode) -> RBNode:
         node.red = False
         node.right.red = node.left.red = True

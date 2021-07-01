@@ -28,23 +28,19 @@ class ABTree(ATree[Node]):
         if node.leaf:
             idx = 0
             for idx, n in enumerate(node.keys):
+                if key == n.key:
+                    # key is alread in tree
+                    return (None, None, None)
                 if key > n.key:
                     # if loop ends, then i will insert on last position
                     idx += 1
                     continue
                 break
             new_node = Node(key, value)
+            self._add_node_to_chain(new_node, self._find_lower(self.root, key),
+                                    self._find_bigger(self.root, key))
+
             node.keys.insert(idx, new_node)
-
-            prev_node = self._find_lower(self.root, key)
-            if prev_node is not None:
-                new_node.prev = prev_node
-                prev_node.nxt = new_node
-
-            nxt_node = self._find_bigger(self.root, key)
-            if nxt_node is not None:
-                nxt_node.prev = new_node
-                new_node.nxt = nxt_node
         else:
             idx = 0
             for n in node.keys:
@@ -127,25 +123,17 @@ class ABTree(ATree[Node]):
         key_deleted = False
         for idx, node in enumerate(vertex.keys):
             if node.key == key:
-                prev_node = node.prev
-                nxt_node = node.nxt
-                if prev_node is not None:
-                    prev_node.nxt = nxt_node
-                if nxt_node is not None:
-                    nxt_node.prev = prev_node
+                self._remove_node_from_chain(node)
 
                 if vertex.leaf:
                     vertex.keys.remove(node)
                     return len(vertex.keys) == self.a - 2
                 else:
                     # if node is not leaf, then there must prev node
-                    replace_node = prev_node
+                    replace_node = node.prev
                     underfull_vertex = self._delete(replace_node.key, vertex.children[idx])
+                    self._add_node_to_chain(replace_node, replace_node.prev, replace_node.nxt)
 
-                    if replace_node.prev is not None:
-                        replace_node.prev.nxt = replace_node
-                    if replace_node.nxt is not None:
-                        replace_node.nxt.prev = replace_node
                     vertex.keys[idx] = replace_node
                     key_deleted = True
                 break
@@ -170,8 +158,8 @@ class ABTree(ATree[Node]):
     def _solve_underfull(self, underfull_vertex: ABVertex, neighbour_vertex: ABVertex,
                          underfull_vertex_is_left: bool, parent_vertex: ABVertex,
                          parent_idx: int) -> None:
-        # nearly underfull - merge vertexes
         if len(neighbour_vertex.keys) == self.a - 1:
+            # nearly underfull - merge vertexes
             if not underfull_vertex_is_left:
                 underfull_vertex, neighbour_vertex = neighbour_vertex, underfull_vertex
             underfull_vertex.keys.extend([parent_vertex.keys.pop(parent_idx), *neighbour_vertex.keys])

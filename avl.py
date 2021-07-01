@@ -34,19 +34,13 @@ class AvlTree(ABinarySearchTree):
     def _insert(self, key, value, node: AvlNode) -> AvlNode:
         if node.external:
             new_node = AvlNode(key, value, left=self.EXTERNAL_NODE, right=self.EXTERNAL_NODE)
-            nxt_node = self._find_bigger(self.root, key)
-            if nxt_node is not None:
-                new_node.nxt = nxt_node
-                nxt_node.prev = new_node
+            self._add_node_to_chain(new_node, self._find_lower(self.root, key),
+                                    self._find_bigger(self.root, key))
 
-            prev_node = self._find_lower(self.root, key)
-            if prev_node is not None:
-                new_node.prev = prev_node
-                prev_node.nxt = new_node
             return new_node
 
         if key == node.key:
-            # key found - nothing to do
+            # key is alread in tree - nothing to do
             return node
         elif key < node.key:
             node.left = self._insert(key, value, node.left)
@@ -87,24 +81,17 @@ class AvlTree(ABinarySearchTree):
         if node.external:
             return node
         if node.key == key:
-            prev_node = node.prev
-            nxt_node = node.nxt
-            if prev_node is not None:
-                prev_node.nxt = nxt_node
-            if nxt_node is not None:
-                nxt_node.prev = prev_node
+            self._remove_node_from_chain(node)
 
             if node.left == self.EXTERNAL_NODE:
                 return node.right
             elif node.right == self.EXTERNAL_NODE:
                 return node.left
             else:
-                replace_node: AvlNode = self._find_lower(node, key)  # type: ignore
+                replace_node = node.prev
                 node.left = self._delete(replace_node.key, node.left)
-                if replace_node.prev is not None:
-                    replace_node.prev.nxt = replace_node
-                if replace_node.nxt is not None:
-                    replace_node.nxt.prev = replace_node
+
+                self._add_node_to_chain(replace_node, replace_node.prev, replace_node.nxt)
                 replace_node.left = node.left
                 replace_node.right = node.right
                 node = replace_node
